@@ -13,34 +13,30 @@
     </style>
 </head>
 <body>
-    <h1>La mia mappa con Leaflet</h1>
+    <h1>Sentieri con problemi</h1>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-geojson.js"></script> <!-- GeoJSON specifico per Leaflet -->
     <script>
-        // Inizializza la mappa
-        var map = L.map('map').setView([51.505, -0.09], 13);  // Imposta una latitudine, longitudine e zoom iniziali
-
-        // Aggiungi un layer di base (mappa)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-        // Esempio di GeoJSON
-        var geojsonData = {
-            "type": "FeatureCollection",
-            "features": [{
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-0.09, 51.505]
-                },
-                "properties": {
-                    "name": "Punto di Esempio"
-                }
-            }]
-        };
-
-        // Aggiungi i dati GeoJSON alla mappa
-        L.geoJSON(geojsonData).addTo(map);
+        // Carica il file GeoJSON
+        fetch('sentieri.json')
+            .then(response => response.json())  // Converte la risposta in formato JSON
+            .then(geojsonData => {
+                // Inizializza la mappa
+                var map = L.map('map');
+                
+                // Aggiungi un layer di base (mappa)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                
+                // Aggiungi i dati GeoJSON alla mappa
+                var geoJsonLayer = L.geoJSON(geojsonData).addTo(map);
+                
+                // Centra la mappa sui limiti del GeoJSON
+                map.fitBounds(geoJsonLayer.getBounds());
+            })
+            .catch(error => {
+                console.error('Errore nel caricare il file GeoJSON:', error);
+            });
     </script>
 </body>
 </html>
