@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet e GeoJSON</title>
+    <!-- Aggiungi il link al CSS di Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sentieri con problemi</h1>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-geojson.js"></script> <!-- GeoJSON specifico per Leaflet -->
+    <script>
+        // Carica il file GeoJSON
+        fetch('sentieri.json')
+            .then(response => response.json())  // Converte la risposta in formato JSON
+            .then(geojsonData => {
+                // Inizializza la mappa
+                var map = L.map('map');
+                
+                // Aggiungi un layer di base (mappa)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                
+                // Aggiungi i dati GeoJSON alla mappa
+                var geoJsonLayer = L.geoJSON(geojsonData).addTo(map);
+                
+                // Centra la mappa sui limiti del GeoJSON
+                map.fitBounds(geoJsonLayer.getBounds());
+            })
+            .catch(error => {
+                console.error('Errore nel caricare il file GeoJSON:', error);
+            });
+    </script>
+</body>
+</html>
